@@ -7,7 +7,7 @@
 
 3、导航先启动仿真环境：roslaunch robo_sim robot_sim.launch
 
-4、再启动路径规划：roslaunch robo_sim Wnavigation.launch
+4、再启动路径规划：roslaunch robo_sim wnavigation.launch
 
 5、其他的launch文件可能不能用，仅供测试使用。
 
