@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<launch>
+    <param name="/use_sim_time" value="true"/>
+    
+    <arg name="map_file" default="$(find robo_sim)/maps/my_map1.yaml"/>
+    <arg name="open_rviz" default="true"/>
+
+    <!-- ==================== Map Server ==================== -->
+    <node pkg="map_server" type="map_server" name="map_server" 
+          args="$(arg map_file)" output="screen">
+        <param name="use_sim_time" value="true"/>
+        <param name="frame_id" value="map"/>
+    </node>
+
+    <!-- ==================== AMCL（关键修复）==================== -->
+    <node pkg="amcl" type="amcl" name="amcl" output="screen">
+        <param name="use_sim_time" value="true"/>
+        <remap from="scan" to="/scan"/>
+        
+        <param name="odom_frame_id" value="odom"/>
+        <param name="base_frame_id" value="base_footprint"/>
+        <param name="global_frame_id" value="map"/>
+        
+        <!-- 关键：设置与地图匹配的初始位姿 -->
+        <param name="initial_pose_x" value="0.0"/>
+        <param name="initial_pose_y" value="0.0"/>
+        <param name="initial_pose_a" value="0.0"/>
+        <!-- 增大初始分散，帮助全局定位 -->
+        <param name="initial_cov_xx" value="2.0"/>
+        <param name="initial_cov_yy" value="2.0"/>
+        <param name="initial_cov_aa" value="1.0"/>
+        
+        <!-- 粒子数 -->
+        <param name="min_particles" value="1000"/>
+        <param name="max_particles" value="5000"/>
+        
+        <!-- 激光参数 -->
+        <param name="laser_min_range" value="0.12"/>
+        <param name="laser_max_range" value="8.0"/>
+        <param name="laser_max_beams" value="360"/>
+        
+        <!-- 降低更新阈值，让AMCL更频繁更新 -->
+        <param name="update_min_d" value="0.1"/>
+        <param name="update_min_a" value="0.2"/>
+        
+        <!-- 里程计噪声 -->
+        <param name="odom_model_type" value="diff"/>
+        <param name="odom_alpha1" value="0.2"/>
+        <param name="odom_alpha2" value="0.2"/>
+        <param name="odom_alpha3" value="0.2"/>
+        <param name="odom_alpha4" value="0.2"/>
+        
+        <!-- TF容忍度 -->
+        <param name="transform_tolerance" value="1.0"/>
+        
+        <!-- 关键：确保发布TF -->
+        <param name="gui_publish_rate" value="10.0"/>
+    </node>
+
+    <!-- ==================== Move Base（关键修复）==================== -->
+    <node pkg="move_base" type="move_base" name="move_base" output="screen">
+        <param name="use_sim_time" value="true"/>
+        
+        <param name="base_global_planner" value="global_planner/GlobalPlanner"/>
+        <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>
+        
+        <param name="planner_frequency" value="1.0"/>
+        <param name="controller_frequency" value="5.0"/>
+        
+        <!-- 关键：等待TF就绪的超时时间 -->
+        <param name="global_costmap/transform_tolerance" value="1.0"/>
+        <param name="local_costmap/transform_tolerance" value="1.0"/>
+        
+        <!-- 坐标系 -->
+        <param name="global_costmap/global_frame" value="map"/>
+        <param name="global_costmap/robot_base_frame" value="base_footprint"/>
+        <param name="local_costmap/global_frame" value="odom"/>
+        <param name="local_costmap/robot_base_frame" value="base_footprint"/>
+        
+        <!-- 关键：确保使用static_map -->
+        <param name="global_costmap/static_map" value="true"/>
+        <param name="global_costmap/rolling_window" value="false"/>
+        
+        <!-- 局部代价地图 -->
+        <param name="local_costmap/rolling_window" value="true"/>
+        <param name="local_costmap/width" value="5.0"/>
+        <param name="local_costmap/height" value="5.0"/>
+        <param name="local_costmap/resolution" value="0.05"/>
+        
+        <!-- 恢复行为 -->
+        <param name="recovery_behavior_enabled" value="true"/>
+        <param name="clearing_rotation_allowed" value="true"/>
+        
+        <!-- 轨迹规划参数 -->
+        <param name="TrajectoryPlannerROS/max_vel_x" value="0.3"/>
+        <param name="TrajectoryPlannerROS/min_vel_x" value="0.1"/>
+        <param name="TrajectoryPlannerROS/max_vel_theta" value="0.5"/>
+        <param name="TrajectoryPlannerROS/min_in_place_vel_theta" value="0.3"/>
+        <param name="TrajectoryPlannerROS/holonomic_robot" value="false"/>
+        <param name="TrajectoryPlannerROS/xy_goal_tolerance" value="0.2"/>
+        <param name="TrajectoryPlannerROS/yaw_goal_tolerance" value="0.2"/>
+    </node>
+
+    <!-- ==================== RViz ==================== -->
+    <group if="$(arg open_rviz)">
+        <node name="rviz" pkg="rviz" type="rviz" 
+              args="-d $(find wpr_simulation)/rviz/nav.rviz" output="screen">
+            <param name="use_sim_time" value="true"/>
+        </node>
+    </group>
+
+</launch>

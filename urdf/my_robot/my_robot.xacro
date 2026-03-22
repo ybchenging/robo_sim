@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name = "my_robot">
+
+  <!--包含身体部分的xacro文件-->
+  <xacro:include filename="$(find robo_sim)/urdf/my_robot/base.urdf.xacro"/>
+  <!--包含激光传感器部分的xacro文件-->
+  <xacro:include filename="$(find robo_sim)/urdf/my_robot/sensor/laser.urdf.xacro"/>
+  <!--包含IMU传感器部分的xacro文件-->
+  <xacro:include filename="$(find robo_sim)/urdf/my_robot/sensor/imu.urdf.xacro"/>
+  <!--包含摄像头传感器部分的xacro文件-->
+  <xacro:include filename="$(find robo_sim)/urdf/my_robot/sensor/camera.urdf.xacro"/>
+  <!--包含轮子部分的xacro文件-->
+  <xacro:include filename="$(find robo_sim)/urdf/my_robot/actuator/wheel.urdf.xacro"/>
+  <!--包含万向轮部分的xacro文件-->
+  <xacro:include filename="$(find robo_sim)/urdf/my_robot/actuator/caster.urdf.xacro"/>
+  <!--包含Gazebo控制插件的xacro文件-->
+  <xacro:include filename = "$(find robo_sim)/urdf/plugins/gazebo_control_plugins.xacro"/>
+  <!--包含Gazebo传感器插件的xacro文件-->
+  <xacro:include filename = "$(find robo_sim)/urdf/plugins/gazebo_sensor_plugins.xacro"/>
+  <!--包含ros_control相关的xacro文件-->
+  <!-- <xacro:include filename = "$(find robo_sim)/urdf/my_robot/robo_ros_control.xacro"/> -->
+
+
+
+
+  <!--实例化身体部分--><!--调用宏-->
+  <xacro:base_xacro length="0.12" radius="0.1" mass="1.0"/>
+  <!--实例化激光传感器部分，指定位置参数-->
+  <xacro:laser_xacro xyz="0.0 0.0 0.075"/>
+  <!--实例化IMU传感器部分，指定位置参数-->
+  <xacro:imu_xacro xyz="0.0 0.0 0.02"/>
+  <!--实例化摄像头传感器部分，指定位置参数-->
+  <xacro:camera_xacro xyz="0.10 0.0 0.055"/>
+  <!--实例化轮子部分，指定位置参数-->
+  <xacro:wheel_xacro wheel_name="left_wheel" xyz="0.0 0.10 -0.06"/><!--左轮  -0.06-->
+  <xacro:wheel_xacro wheel_name="right_wheel" xyz="0.0 -0.10 -0.06"/>
+  <!--实例化万向轮部分，指定位置参数-->
+  <xacro:caster_xacro caster_name="front_caster" xyz="0.10 0.0 -0.076"/>
+  <xacro:caster_xacro caster_name="rear_caster" xyz="-0.10 0.0 -0.076"/>
+
+  <!--实例化Gazebo控制插件 -->
+  <xacro:gazebo_control_plugin />
+
+  <!--实例化Gazebo传感器插件 -->
+  <xacro:gazebo_sensor_plugin />
+
+  <!--实例化ros_control相关的内容 -->
+  <!-- <xacro:my_roboot_transmissions/>
+  <xacro:my_robot_gazebo_ros_control /> -->
+
+
+  </robot>

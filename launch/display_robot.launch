@@ -1,0 +1,25 @@
+<launch>
+    <!-- 1. 将 URDF 文件的内容加载到参数服务器 -->
+    <!--param name="robot_description" 
+           textfile="$(find robo_sim)/urdf/first_robot.urdf" /-->
+
+
+
+    <!--1.将 XACRO 文件的内容加载到参数服务器-->    <!--在终端输入xacro  文件地址名字.xacro,即可转换成urdf-->
+    <!-- <param name="robot_description" 
+       command="$(find xacro)/xacro '$(find robo_sim)/urdf/first_robot.xacro'" /> -->
+
+    <param name="robot_description" 
+       command="$(find xacro)/xacro '$(find robo_sim)/urdf/my_robot/my_robot.xacro'" />
+
+
+    <!-- 2. 启动 robot_state_publisher，用于发布机器人各部分的坐标变换 (tf) -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+    <!-- 3. 启动 joint_state_publisher，用于发布关节状态（如果有GUI，可以手动拖动关节） -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+
+    <!-- 4. 启动 rviz，并可以加载一个预先配置好的 rviz 配置文件 -->
+    <node name="rviz" pkg="rviz" type="rviz" 
+          args="-d $(find robo_sim)/launch/robot_display.rviz" />
+</launch>

@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="gazebo_control_plugin">
+        <gazebo>
+            <plugin name="diff_drive" filename="libgazebo_ros_diff_drive.so">
+                <!-- 基础话题（可选，默认即 cmd_vel 和 odom） -->
+                <commandTopic>cmd_vel</commandTopic>
+                <odometryTopic>odom</odometryTopic>
+
+                <!-- 坐标系 -->
+                <odometryFrame>odom</odometryFrame>
+                <robotBaseFrame>base_footprint</robotBaseFrame>
+
+                <!-- 车轮关节名称（必须与 URDF 一致） -->
+                <leftJoint>left_wheel_joint</leftJoint>
+                <rightJoint>right_wheel_joint</rightJoint>
+
+                <!-- 几何参数 -->
+                <wheelSeparation>0.2</wheelSeparation> <!-- 车轮之间的距离 -->
+                <wheelDiameter>0.064</wheelDiameter>  <!-- 车轮直径 -->
+
+                <!-- 性能参数 -->
+                <wheelAcceleration>1.0</wheelAcceleration>
+                <wheelTorque>20</wheelTorque> <!-- 增加扭矩以确保足够的动力 -->
+                <updateRate>30</updateRate> <!-- 提高更新频率以获得更流畅的控制 -->
+
+                <!-- TF 发布选项 -->
+                <publishTf>true</publishTf>               <!-- 启用 Gazebo 发布 odom → base_footprint TF -->
+                <publishWheelTF>false</publishWheelTF>
+                <publishOdomTF>true</publishOdomTF>
+                <publishWheelJointState>true</publishWheelJointState>
+
+                <!-- 可选：里程计来源（encoder=编码器，world=世界） -->
+                <odometrySource>world</odometrySource>  
+                <!-- <odometrySource>world</odometrySource>      -->
+            </plugin>
+        </gazebo>
+
+        <!-- <gazebo>
+           <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"/>
+        </gazebo> -->
+    </xacro:macro>
+</robot>

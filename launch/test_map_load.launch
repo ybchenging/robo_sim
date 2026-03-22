@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- 打印调试信息 -->
+    <arg name="map_file" default="$(find robo_sim)/maps/my_map1.yaml"/>
+    
+    <param name="debug_map_path" value="$(arg map_file)"/>
+    
+    <!-- 关键：args 属性 -->
+    <node pkg="map_server" type="map_server" name="map_server" output="screen" 
+          args="$(arg map_file)"/>
+</launch>

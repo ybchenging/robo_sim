@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Run map server -->
+    <node pkg="map_server" type="map_server" name="map_server" args="$(find robo_sim)/maps/my_map1.yaml">
+        <param name="frame_id" value="map"/>
+        <param name="use_sim_time" value="true"/>
+    </node>
+
+
+    <!--- Run AMCL -->
+    <node pkg="amcl" type="amcl" name="amcl">
+        <param name="base_frame_id" value="base_footprint"/>  <!-- 关键！与Gazebo插件一致 -->
+        <param name="use_sim_time" value="true"/>
+    </node>
+
+
+    <!--- Run move_base -->
+    <node pkg="move_base" type="move_base" name="move_base">
+        <rosparam file="$(find robo_sim)/config/nav_config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find robo_sim)/config/nav_config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find robo_sim)/config/nav_config/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find robo_sim)/config/nav_config/local_costmap_params.yaml" command="load" />
+        <param name ="golobal_frame_id" value="map"/> 
+        <param name ="odom_frame_id" value="odom"/>
+        <param name ="base_frame_id" value="base_footprint"/>
+        <param name="base_global_planner" value="global_planner/GlobalPlanner" /> 
+        <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS" />
+        <param name="use_sim_time" value="true"/>
+    </node>
+
+
+
+    <!--- Run rviz -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robo_sim)/rviz/gmap_nav.rviz">
+        <param name="use_sim_time" value="true"/>
+    </node>
+    
+</launch>

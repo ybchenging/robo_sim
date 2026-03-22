@@ -1,0 +1,48 @@
+<launch>
+    <!-- 0.有两个显示器的环境，需要设置显示器-->
+     <arg name="display" default=":0" doc="Display number (:0, :1, etc.)"/>  <!--定义一个参数display，默认值为:0，表示使用第一个显示器-->
+     <env name="DISPLAY" value="$(arg display)"/>  <!--设置环境变量DISPLAY，指定显示器-->
+    <!-- 1. 启动 Gazebo 并加载自定义世界 -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch"> <!--包含 Gazebo 的空世界启动文件-->
+        <arg name="world_name" value="$(find robo_sim)/config/robo_room.world"/> <!--指定要加载的世界文件路径-->
+        <arg name="paused" value="false"/> <!--设置 Gazebo 是否在启动时暂停，false 表示不暂停-->
+        <arg name="use_sim_time" value="true"/> <!--设置 ROS 是否使用仿真时间，true 表示使用-->
+        <arg name="gui" value="true"/> <!--设置是否显示 Gazebo GUI-->
+        <arg name="headless" value="false"/> <!--设置是否以无头模式运行 Gazebo-->
+        <arg name="debug" value="false"/> <!--设置是否启用调试模式-->
+    </include>
+
+    <!-- 2. 将机器人描述（xacro 预处理后）加载到参数服务器 -->
+    <param name="robot_description" 
+           command="$(find xacro)/xacro --inorder '$(find robo_sim)/urdf/my_robot/my_robot.xacro'" />
+
+    <!-- 3. 在 Gazebo 中生成机器人模型（利用参数服务器中的描述） -->
+    <node name="spawn_urdf_robot" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model my_robot -x 0 -y 0 -z -0.1"  >
+         <param name="use_sim_time" value="true"/> <!--设置 spawn_model 节点使用仿真时间-->
+    </node>
+
+    <!-- 4. 启动 robot_state_publisher（自动读取 /robot_description 并发布 TF） -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+       <param name="use_sim_time" value="true"/> <!--设置 robot_state_publisher 使用仿真时间-->
+    </node>
+    <!--joint state publisher的作用是发布机器人的关节约束状态-->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
+         <param name="use_sim_time" value="true"/> 
+    </node>
+
+
+
+    <!-- 4.1 发布 world 到 odom 的静态 TF 连接（修复 TF 断连问题） -->
+    <!-- <node name="static_transform_publisher" pkg="tf" type="static_transform_publisher"
+          args="0 0 0 0 0 0 world odom 10" output="screen">
+         <param name="use_sim_time" value="true"/>
+    </node> -->
+
+    <!-- 5. （可选）加载 ros_control 控制器（如果机器人需要运动） -->
+    <!-- 假设控制器配置文件位于 $(find robo_sim)/config/control.yaml -->
+    <!--
+    <rosparam file="$(find robo_sim)/config/control.yaml" command="load"/>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner"
+          args="joint_state_controller joint1_position_controller" output="screen"/>
+    -->
+</launch>

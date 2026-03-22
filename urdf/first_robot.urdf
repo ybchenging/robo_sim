@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<robot name="first_robot">
+<!--机器人的身体部分-->
+<!-- This is a simple URDF file for a robot with a single link called "base_link". -->  
+<link name="base_link">
+  <visual>  <!--外观-->
+    <!--沿着自己几何中心的偏移和旋转量-->
+    <origin xyz="0 0 0" rpy="0 0 0"/> 
+    <!--定义几何形状-->
+    <geometry>
+      <!--box size="0.5 0.5 0.5"/-->  <!--立方体-->
+      <cylinder radius="0.10" length="0.12"/>  <!--圆柱体-->
+    </geometry>
+    <!--定义材质-->
+    <material name="blue">
+      <color rgba="0 0 1 0.5"/>  <!--蓝色(rgb)，半透明(0.5)-->
+    </material>
+  </visual>
+  <collision>  <!--碰撞模型-->
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <cylinder radius="0.10" length="0.12"/>
+    </geometry>
+  </collision>
+  <inertial>  <!--惯性属性-->
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="1.0"/>  <!--质量-->
+    <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>  <!--惯性矩阵-->
+  </inertial>
+</link>
+
+  <!--机器人的IMU部分，惯性测量传感器-->
+  <link name="imu_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/> <!--沿着自己几何中心的偏移和旋转量-->
+      <geometry>
+        <box size="0.02 0.02 0.02"/>  <!--立方体-->
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 0.5"/>  <!--红色(rgb)，半透明(0.5)-->
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.02 0.02 0.02"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.05"/>
+      <inertia ixx="0.005" ixy="0" ixz="0" iyy="0.005" iyz="0" izz="0.005"/>
+    </inertial>
+   </link>
+
+
+   
+   <!--连接两个链接的关节-->
+    <joint name="imu_joint" type="fixed">
+      <parent link="base_link"/>  <!--父链接-->
+      <child link="imu_link"/>  <!--子链接-->
+    <origin xyz="0 0 0.03" rpy="0 0 0"/>  <!--关节位置-->
+    </joint>
+</robot>

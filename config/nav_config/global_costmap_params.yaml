@@ -1,0 +1,24 @@
+global_costmap:
+  global_frame: map
+  robot_base_frame: base_footprint
+  static_map: true
+  update_frequency: 1.0
+  publish_frequency: 1.0
+  transform_tolerance: 1.0
+
+
+recovery_behaviors:  # 定义恢复行为列表
+  - name: 'conservative_reset'
+    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+  - name: 'rotate_recovery'
+    type: 'rotate_recovery/RotateRecovery'
+  - name: 'aggressive_reset'
+    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+
+conservative_reset: # 这个恢复行为在机器人被困时会清除一个较大的区域，以增加重新规划的机会
+  reset_distance: 2.0
+  layer_names: ["obstacle_layer"]
+
+aggressive_reset: # 这个恢复行为在机器人被困时会清除一个更大的区域，适用于更复杂的环境
+  reset_distance: 0.0
+  layer_names: ["obstacle_layer"]

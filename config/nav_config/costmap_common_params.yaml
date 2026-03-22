@@ -1,0 +1,13 @@
+robot_radius: 0.12 # 机器人半径，必须小于或等于膨胀半径
+# footprint: [[0, 0]]     # 占位，表示圆形用 robot_radius，ROS 会用半径生成圆
+inflation_radius: 0.15 # 膨胀半径，必须大于或等于机器人半径
+obstacle_range: 6.0 # 传感器检测范围
+raytrace_range: 6.0 # 传感器最大射线追踪范围，必须大于obstacle_range
+resolution: 0.1  # 单位 m/格
+observation_sources: base_lidar
+base_lidar: {
+    data_type: LaserScan,
+    topic: /scan,
+    marking: true, # 是否将检测到的障碍物标记在代价地图上
+    clearing: true # 是否清除已知的障碍物（如果传感器不再检测到它们）
+    }
